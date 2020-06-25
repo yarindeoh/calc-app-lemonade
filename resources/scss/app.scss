@@ -1,19 +1,12 @@
 .app {
-
-  display: flex;
-  flex-direction: column;
-
-  .title {
-    font-size: 30px;
-    padding: 10px;
-  }
-
-  .section {
     display: flex;
-    justify-content: center;
-  }
-  
-  p {
-    text-align: center;
-  }
+    flex-direction: column;
+    .messages {
+        .agent-message {
+            color: purple;
+        }
+        .user-message {
+            color: salmon;
+        }
+    }
 }
