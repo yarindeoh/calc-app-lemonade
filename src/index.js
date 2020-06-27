@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
-import { syncTranslationWithStore } from 'react-redux-i18n';
 
 import createRootReducer from 'services/rootReducer';
 import rootSaga from 'services/rootSagas';
@@ -18,7 +17,6 @@ const store = createStore(
     composeWithDevTools(applyMiddleware(...middleware))
 );
 sagaMiddleware.run(rootSaga);
-syncTranslationWithStore(store);
 
 ReactDOM.render(
     <Provider store={store}>

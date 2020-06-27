@@ -2,16 +2,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import {
-    changeForStepAction,
     postUserMessageAction,
-    postUserMessageFromStep,
+    postUserMessageFromStepAction,
+    chatInitializationAction,
+    MESSAGE_TYPE,
+    USER,
 } from 'containers/Chat/chatConstants';
 import { getMessagesList, getCurrentStep } from 'containers/Chat/chatSelectors';
 
 export const useAgentInit = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(changeForStepAction('NAME'));
+        dispatch(chatInitializationAction());
     }, []);
 };
 
@@ -28,19 +30,23 @@ export const useUserMessage = () => {
     return {
         postUserMessage: useCallback(
             (userMessage) => {
+                // Add message to message list in the store
+                // for presenting messages in UI and for future transcript
                 dispatch(
                     postUserMessageAction({
-                        type: 'USER',
-                        message: userMessage,
+                        sender: USER,
+                        content: userMessage,
+                        type: MESSAGE_TYPE.message,
                     })
                 );
-                console.log(currentStep);
+                // post user message to handle by middleware
                 dispatch(
-                    postUserMessageFromStep({
-                        username: userMessage,
+                    postUserMessageFromStepAction({
+                        userInput: userMessage,
                         currentStep,
                     })
                 );
+                setUserMessage('');
             },
             [currentStep]
         ),

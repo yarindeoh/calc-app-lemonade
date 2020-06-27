@@ -1,8 +1,8 @@
 import { fork, all } from 'redux-saga/effects';
 
-import { initTranslationSaga } from 'services/i18n/translationSaga';
 import { watchChat } from 'containers/Chat/chatSagas';
 
+//TODO:: check is there is another saga
 export default function* rootSaga() {
-    yield all([fork(initTranslationSaga), fork(watchChat)]);
+    yield all([fork(watchChat)]);
 }

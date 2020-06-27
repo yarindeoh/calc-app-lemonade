@@ -17,7 +17,6 @@ module.exports = (env, argv) => {
                 components: path.resolve(__dirname, 'src/components'),
                 containers: path.resolve(__dirname, 'src/containers'),
                 services: path.resolve(__dirname, 'src/services'),
-                i18n: path.resolve(__dirname, 'src/services/i18n'),
             },
         },
         output: {

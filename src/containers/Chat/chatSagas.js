@@ -1,41 +1,91 @@
-import { put, takeLatest, delay, all } from 'redux-saga/effects';
-
+import { put, takeLatest, delay, call, select } from 'redux-saga/effects';
 import {
-    CHANGE_STEP,
-    changeCurrStepAction,
+    PROMOTE_CURR_STEP,
     postAgentMessageAction,
-    AGENT_MESSAGES,
+    promoteStepAction,
+    promoteToStepAction,
+    MESSAGES_QUEUE,
+    CHAT_INITIALIZATION,
+    USER_POST_MESSAGE,
 } from 'containers/Chat/chatConstants';
+import { getCurrentStep } from 'containers/Chat/chatSelectors';
 
-export function* nameStepHandler(action) {
-    let step = action.payload;
-    yield put(changeCurrStepAction(step));
-    for (let message in AGENT_MESSAGES[step]) {
-        yield delay(1000);
-        yield put(
-            postAgentMessageAction({
-                type: 'AGENT',
-                message: AGENT_MESSAGES[step][message],
-                // id: messageCount + 1,
-            })
-        );
+/**
+ * A naive and linear decision of next step base on storage prop
+ * decistion tree is arr of arr/text
+ * if not -> promote to welcome step
+ * if yes -> promote to welcome back step
+ */
+export function* chatInitHandler() {
+    const username = sessionStorage.getItem('username');
+    yield put(promoteToStepAction(!username ? 1 : 0));
+    yield agentPostMessagesHandler();
+}
+
+export function* handleEndOfQueue(step) {
+    if (MESSAGES_QUEUE[step].length === 0) {
+        yield put(promoteStepAction());
     }
 }
 
-//TODO:: convert message to const
-export function* handler(action) {
-    let { username } = action.payload;
-    yield delay(1000);
-    yield put(
-        postAgentMessageAction({
-            type: 'AGENT',
-            message: `Nice to meet you ${username}`,
-        })
-    );
-    //dispatch promoteStep
+/**
+ * Send agent messages
+ */
+export function* agentPostMessagesHandler() {
+    let currentStep = yield select(getCurrentStep);
+    yield postAgentMessages({ messages: MESSAGES_QUEUE[currentStep] });
+    yield handleEndOfQueue(currentStep);
+}
+
+export function* userPostMessageHandler(action) {
+    let { currentStep, userInput } = action.payload;
+    yield postAgentMessages({
+        messages: MESSAGES_QUEUE[currentStep],
+        userInput,
+    });
+    yield handleEndOfQueue(currentStep);
+}
+
+export function popFromMessageQueue({ messages, indexsToBeRemoved }) {
+    while (indexsToBeRemoved.length) {
+        messages.splice(indexsToBeRemoved.pop(), 1);
+    }
+}
+
+/**
+ *
+ * @param {*} queue Array of objects of messasges { text: String, type: MESSAGE/REQUEST }
+ * @param {*} sender AGENT/USER
+ */
+export function* postAgentMessages({ messages, userInput }) {
+    let indexsToBeRemoved = [];
+    for (let key in messages) {
+        let message = messages[key];
+        yield delay(1000);
+        yield put(
+            postAgentMessageAction({
+                sender: message.sender,
+                content:
+                    typeof message.content === 'function'
+                        ? message.content(userInput)
+                        : message.content,
+                type: message.type,
+            })
+        );
+        if (message.type === 'REQUEST') {
+            !message?.endless && indexsToBeRemoved.push(key);
+            break;
+        }
+        !message?.endless && indexsToBeRemoved.push(key);
+    }
+    yield call(popFromMessageQueue, {
+        messages,
+        indexsToBeRemoved,
+    });
 }
 
 export function* watchChat() {
-    yield takeLatest(`${CHANGE_STEP}_NAME`, nameStepHandler);
-    yield takeLatest(`NAME_STEP/USER_POST_MESSAGE`, handler);
+    yield takeLatest(CHAT_INITIALIZATION, chatInitHandler);
+    yield takeLatest(PROMOTE_CURR_STEP, agentPostMessagesHandler);
+    yield takeLatest(USER_POST_MESSAGE, userPostMessageHandler);
 }

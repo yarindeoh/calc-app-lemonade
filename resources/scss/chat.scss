@@ -1,0 +1,35 @@
+.messages {
+    .bubble {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .bubble-avatar {
+            width: 35px;
+            height: 35px;
+            min-width: 35px;
+            margin-right: 10px;
+            border-radius: 50%;
+            background: url(/resources/images/agent_avatar.png) 0 0 no-repeat;
+            background-size: 35px 35px;
+        }
+        .bubble-text {
+            padding: 15px !important;
+            text-align: left;
+            border-radius: 20px 20px 20px 5px;
+            display: inline-block;
+            max-width: 430px;
+            white-space: normal;
+            font-size: 16px;
+            //change animation
+            animation: 0.18s ease-in 0.28s 1 normal forwards running jBcSpD;
+        }
+    }
+    .agent-message {
+        background-color: #f7f7f7;
+    }
+    .user-message {
+        background-color: rgb(74, 74, 74);
+        color: white;
+    }
+}

@@ -5,6 +5,7 @@ import {
     useMessagesList,
     useUserMessage,
 } from 'containers/Chat/chatHooks';
+import { Messages } from './components/Messages';
 
 const ChatView = () => {
     useAgentInit();
@@ -13,17 +14,7 @@ const ChatView = () => {
     return (
         <div className="app">
             <div className="chat"></div>
-            <div className="messages">
-                {/* AddID */}
-                {messagesList.map((item, index) => (
-                    <div
-                        className={`${item.type.toLowerCase()}-message`}
-                        key={`${item.type.toLowerCase()}-message-${index}`}
-                    >
-                        {item.message}
-                    </div>
-                ))}
-            </div>
+            <Messages messagesList={messagesList} />
             <div className="chat-footer">
                 <input
                     type="text"
