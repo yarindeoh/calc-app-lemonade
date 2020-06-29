@@ -20,7 +20,7 @@ import { getCurrentStep } from 'containers/Chat/chatSelectors';
 export function* chatInitHandler() {
     const username = sessionStorage.getItem('username');
     yield put(promoteToStepAction(!username ? 1 : 0));
-    yield agentPostMessagesHandler();
+    yield call(agentPostMessagesHandler);
 }
 
 export function* handleEndOfQueue(step) {
@@ -34,17 +34,18 @@ export function* handleEndOfQueue(step) {
  */
 export function* agentPostMessagesHandler() {
     let currentStep = yield select(getCurrentStep);
-    yield postAgentMessages({ messages: MESSAGES_QUEUE[currentStep] });
-    yield handleEndOfQueue(currentStep);
+    yield call(postAgentMessages, { messages: MESSAGES_QUEUE[currentStep] });
+    yield call(handleEndOfQueue, currentStep);
 }
+
 
 export function* userPostMessageHandler(action) {
     let { currentStep, userInput } = action.payload;
-    yield postAgentMessages({
+    yield call(postAgentMessages, {
         messages: MESSAGES_QUEUE[currentStep],
         userInput,
     });
-    yield handleEndOfQueue(currentStep);
+    yield call(handleEndOfQueue, currentStep);
 }
 
 export function popFromMessageQueue({ messages, indexsToBeRemoved }) {
