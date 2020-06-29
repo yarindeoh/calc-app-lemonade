@@ -25,7 +25,12 @@ export const Messages = memo(({ messagesList }) => {
                 );
             })}
             {isTyping && (
-                <Bubble type="agent" message=". . ." id="typing" showAvatar />
+                <Bubble
+                    type="agent"
+                    componentPath="TypingSpinner.js"
+                    id="typing"
+                    showAvatar
+                />
             )}
         </div>
     );

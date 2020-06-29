@@ -91,10 +91,10 @@
             border-radius: 20px !important;
         }
 
-        div:not(.user) > div:nth-of-type(2n) {
+        div:not(.user):not(.spinner) > div:nth-of-type(2n) {
             border-top-left-radius: 3px;
         }
-        div:not(.user) > div:nth-of-type(2n + 1) {
+        div:not(.user):not(.spinner) > div:nth-of-type(2n + 1) {
             border-bottom-left-radius: 3px;
         }
     }
