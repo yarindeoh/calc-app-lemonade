@@ -8,7 +8,11 @@ import {
     MESSAGE_TYPE,
     USER,
 } from 'containers/Chat/chatConstants';
-import { getMessagesList, getCurrentStep } from 'containers/Chat/chatSelectors';
+import {
+    getMessagesList,
+    getCurrentStep,
+    getTypingState,
+} from 'containers/Chat/chatSelectors';
 
 export const useAgentInit = () => {
     const dispatch = useDispatch();
@@ -18,11 +22,9 @@ export const useAgentInit = () => {
 };
 
 export const useMessagesList = () => {
-    let messagesList = useSelector(getMessagesList, shallowEqual);
-    return {
-        messagesList,
-    };
+    return useSelector(getMessagesList, shallowEqual);
 };
+
 export const useUserMessage = () => {
     const dispatch = useDispatch();
     const [userMessage, setUserMessage] = useState('');
@@ -39,13 +41,14 @@ export const useUserMessage = () => {
                         type: MESSAGE_TYPE.message,
                     })
                 );
-                // post user message to handle by middleware
+                // Post user message to handle by middleware
                 dispatch(
                     postUserMessageFromStepAction({
                         userInput: userMessage,
                         currentStep,
                     })
                 );
+                // Reset user input
                 setUserMessage('');
             },
             [currentStep]
@@ -53,4 +56,8 @@ export const useUserMessage = () => {
         userMessage,
         setUserMessage,
     };
+};
+
+export const useTypingState = () => {
+    return useSelector(getTypingState, shallowEqual);
 };

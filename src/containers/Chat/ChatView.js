@@ -9,20 +9,21 @@ import { Messages } from './components/Messages';
 
 const ChatView = () => {
     useAgentInit();
-    const { messagesList } = useMessagesList();
+    const messagesList = useMessagesList();
     const { postUserMessage, setUserMessage, userMessage } = useUserMessage();
     return (
-        <div className="app">
-            <div className="chat"></div>
+        <div className="chat">
             <Messages messagesList={messagesList} />
-            <div className="chat-footer">
+            <div className="chat-input">
                 <input
                     type="text"
                     value={userMessage}
                     onChange={(event) => setUserMessage(event.target.value)}
                 />
-                <button onClick={() => postUserMessage(userMessage)}>
-                    Submit
+                <button
+                    onClick={() => postUserMessage(userMessage)}
+                    className="submit-icon"
+                >
                 </button>
             </div>
         </div>

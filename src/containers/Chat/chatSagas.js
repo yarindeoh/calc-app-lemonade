@@ -4,6 +4,7 @@ import {
     postAgentMessageAction,
     promoteStepAction,
     promoteToStepAction,
+    typingAction,
     MESSAGES_QUEUE,
     CHAT_INITIALIZATION,
     USER_POST_MESSAGE,
@@ -61,6 +62,7 @@ export function* postAgentMessages({ messages, userInput }) {
     let indexsToBeRemoved = [];
     for (let key in messages) {
         let message = messages[key];
+        yield put(typingAction(true));
         yield delay(1000);
         yield put(
             postAgentMessageAction({
@@ -72,6 +74,7 @@ export function* postAgentMessages({ messages, userInput }) {
                 type: message.type,
             })
         );
+        yield put(typingAction(false));
         if (message.type === 'REQUEST') {
             !message?.endless && indexsToBeRemoved.push(key);
             break;

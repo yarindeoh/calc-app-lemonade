@@ -1,4 +1,31 @@
 body {
-    font-size: 14px;
+    font-size: $body-font-1;
     font-family: 'DINNextW01-Light';
+    margin: 0;
+}
+
+@mixin flex {
+    display: flex;
+}
+
+@mixin flex-container($content) {
+    @include flex();
+    justify-content: $content;
+}
+
+@mixin flex-item($direction) {
+    display: flex;
+    align-self: center;
+}
+
+//For Desktop
+@media only screen and (min-width: 768px) {
+    body {
+        transform: translate(-50%, 0);
+        position: fixed;
+        left: 50%;
+        border: 1px solid $secondary-color;
+        border-radius: 5px;
+        min-width: 430px;
+    }
 }

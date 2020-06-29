@@ -1,18 +1,15 @@
 import React, { memo } from 'react';
 
-import { Avatar } from 'components/Avatar';
-
-export const Bubble = memo(({ type, message, id, avatarPath }) => {
+export const Bubble = memo(({ type, message, id, showAvatar }) => {
     return (
-        <div className="bubble">
-            {/* <Avatar imgPath={avatarPath} /> */}
-            <div className="bubble-avatar"></div>
-            <p
-                className={`bubble-text ${type}-message`}
+        <div className={`${type}`}>
+            {showAvatar && <div className={`bubble-avatar-${type}`}></div>}
+            <div
+                className={`bubble ${type}-message`}
                 key={`${type}-message-${id}`}
             >
                 {message}
-            </p>
+            </div>
         </div>
     );
 });

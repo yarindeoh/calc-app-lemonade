@@ -10,6 +10,10 @@
 /dist
 dist
 
+# dev
+*.map
+*.css
+
 # misc
 npm-debug.log*
 yarn-debug.log*

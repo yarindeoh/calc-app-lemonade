@@ -6,11 +6,11 @@ export const USER = 'USER';
 export const AGENT_MESSAGE = `${NAMESPACE}/AGENT_MESSAGE`;
 export const USER_MESSAGE = `${NAMESPACE}/USER_MESSAGE`;
 export const POST_MESSAGE = 'POST_MESSAGE';
-export const USER_POST_MESSAGE = `${USER}_${POST_MESSAGE}`;
-export const RESET_USER_MESSAGE = `${NAMESPACE}/RESET_USER_MESSAGE`;
+export const USER_POST_MESSAGE = `${NAMESPACE}/${USER}_${POST_MESSAGE}`;
 export const PROMOTE_CURR_STEP = `${NAMESPACE}/PROMOTE_CURR_STEP`;
 export const PROMOTE_TO_STEP = `${NAMESPACE}/PROMOTE_TO_CURR_STEP`;
 export const CHAT_INITIALIZATION = `${NAMESPACE}/CHAT_INITIALIZATION`;
+export const TYPING_STATE = `${NAMESPACE}/TYPING_STATE`;
 
 export const MESSAGE_TYPE = {
     message: 'MESSAGE',
@@ -18,7 +18,7 @@ export const MESSAGE_TYPE = {
 };
 
 //TODO:: move to external config file
-export const STEPS = ['INIT', ['WELCOME_BACK', 'WELCOME'], 'QA'];
+export let steps = ['INIT', ['WELCOME_BACK', 'WELCOME'], 'QA'];
 export let MESSAGES_QUEUE = {
     WELCOME: [
         {
@@ -54,18 +54,21 @@ export let MESSAGES_QUEUE = {
     ],
     QA: [
         {
-            content: 'Alright, this is how it’s going to work',
-            type: MESSAGE_TYPE.message,
-            sender: AGENT,
-        },
-        {
             content:
-                'List any mathematical expression you can think of - I’ll crunch it in no time',
+                'Alright, this is how it’s going to work. List any mathematical expression you can think of - I’ll crunch it in no time',
             type: MESSAGE_TYPE.request,
             sender: AGENT,
         },
         {
-            content: (exp) => evaluate(exp),
+            // In the future handle application validation
+            // coming from mathjs
+            content: (exp) => {
+                try {
+                    return evaluate(exp);
+                } catch (err) {
+                    return err;
+                }
+            },
             type: MESSAGE_TYPE.message,
             sender: AGENT,
             endless: true,
@@ -79,7 +82,6 @@ export let MESSAGES_QUEUE = {
     ],
 };
 
-//Change all add step first
 export const postAgentMessageAction = (payload) => ({
     type: AGENT_MESSAGE,
     payload,
@@ -88,10 +90,6 @@ export const postAgentMessageAction = (payload) => ({
 export const postUserMessageAction = (payload) => ({
     type: USER_MESSAGE,
     payload,
-});
-
-export const resetUserMessageAction = () => ({
-    type: RESET_USER_MESSAGE,
 });
 
 export const postUserMessageFromStepAction = (payload) => ({
@@ -109,5 +107,10 @@ export const promoteStepAction = () => ({
 
 export const promoteToStepAction = (payload) => ({
     type: PROMOTE_TO_STEP,
+    payload,
+});
+
+export const typingAction = (payload) => ({
+    type: TYPING_STATE,
     payload,
 });

@@ -1,25 +1,32 @@
-import React, { memo } from 'react';
-import { Bubble } from 'components/Bubble';
+import React, { memo, createRef } from 'react';
 
-import agentAvatar from 'resources/images/agent_avatar.png';
-import userAvatar from 'resources/images/user_avatar.png';
+import { Bubble } from 'components/Bubble';
+import { MESSAGE_TYPE, USER } from 'containers/Chat/chatConstants';
+import { useTypingState } from 'containers/Chat/chatHooks';
 
 export const Messages = memo(({ messagesList }) => {
+    const isTyping = useTypingState();
     return (
         <div className="messages">
             {messagesList.map((item, index) => {
-                //TODO:: add avatar only in the last messages
-                let type = item.sender.toLowerCase();
+                let sender = item.sender.toLowerCase();
+
                 return (
                     <Bubble
-                        type={type}
+                        type={sender}
                         message={item.content}
                         id={index}
                         key={index}
-                        avatarPath={type === 'user' ? userAvatar : agentAvatar}
+                        showAvatar={
+                            item.type === MESSAGE_TYPE.request ||
+                            sender === USER.toLowerCase()
+                        }
                     />
                 );
             })}
+            {isTyping && (
+                <Bubble type="agent" message=". . ." id="typing" showAvatar />
+            )}
         </div>
     );
 });

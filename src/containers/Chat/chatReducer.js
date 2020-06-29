@@ -1,14 +1,16 @@
 import {
-    STEPS,
+    steps,
     PROMOTE_CURR_STEP,
     AGENT_MESSAGE,
     USER_MESSAGE,
     PROMOTE_TO_STEP,
+    TYPING_STATE,
 } from 'containers/Chat/chatConstants';
 
 const initialState = {
-    currentStep: STEPS[0],
+    currentStep: steps[0],
     messagesList: [],
+    isTyping: false,
 };
 
 export function chatReducer(state = initialState, action) {
@@ -19,15 +21,22 @@ export function chatReducer(state = initialState, action) {
                 ...state,
                 messagesList: [...state.messagesList, action.payload],
             };
+        //TODO:: refactor currentStep change from state
         case PROMOTE_CURR_STEP:
             return {
                 ...state,
-                currentStep: STEPS.splice(0, 1) && STEPS[0],
+                currentStep: [...steps.splice(0, 1)] && steps[0],
             };
         case PROMOTE_TO_STEP:
             return {
                 ...state,
-                currentStep: STEPS.splice(0, 1) && STEPS[0][action.payload],
+                currentStep:
+                    [...steps.splice(0, 1)] && steps[0][action.payload],
+            };
+        case TYPING_STATE:
+            return {
+                ...state,
+                isTyping: action.payload,
             };
         default:
             return state;
