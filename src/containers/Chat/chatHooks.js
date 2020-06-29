@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import {
@@ -60,4 +60,15 @@ export const useUserMessage = () => {
 
 export const useTypingState = () => {
     return useSelector(getTypingState, shallowEqual);
+};
+
+export const useScrollBottomMsgs = () => {
+    const messagesEndRef = useRef(null);
+    let messages = useMessagesList();
+    const scrollToBottom = () => {
+        messagesEndRef.current &&
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    };
+    useEffect(scrollToBottom, [messages]);
+    return messagesEndRef;
 };

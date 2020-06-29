@@ -1,18 +1,19 @@
-import React, { memo, createRef } from 'react';
+import React, { memo, useRef, useEffect } from 'react';
 
 import { Bubble } from 'components/Bubble';
 import { MESSAGE_TYPE, USER } from 'containers/Chat/chatConstants';
-import { useTypingState } from 'containers/Chat/chatHooks';
+import { useTypingState, useScrollBottomMsgs } from 'containers/Chat/chatHooks';
 
 export const Messages = memo(({ messagesList }) => {
     const isTyping = useTypingState();
+    const messagesEndRef = useScrollBottomMsgs();
     return (
         <div className="messages">
             {messagesList.map((item, index) => {
                 let sender = item.sender.toLowerCase();
-
                 return (
                     <Bubble
+                        ref={messagesEndRef}
                         type={sender}
                         message={item.content}
                         id={index}
@@ -27,7 +28,7 @@ export const Messages = memo(({ messagesList }) => {
             {isTyping && (
                 <Bubble
                     type="agent"
-                    componentPath="TypingSpinner.js"
+                    componentPath="TypingSpinner"
                     id="typing"
                     showAvatar
                 />

@@ -1,14 +1,14 @@
-import React, { memo, lazy, Suspense } from 'react';
+import React, { memo, lazy, Suspense, forwardRef } from 'react';
 
 export const Bubble = memo(
-    ({ type, message, id, showAvatar, componentPath }) => {
+    forwardRef(({ type, message, id, showAvatar, componentPath }, ref) => {
         // In the future, change to absolute path and
         // support passed component props and proper loader
         const CustomComponent = lazy(() =>
             import(`src/components/${componentPath}`)
         );
         return (
-            <div className={`${type}`}>
+            <div className={`${type}`} ref={ref}>
                 {showAvatar && <div className={`bubble-avatar-${type}`}></div>}
                 <div
                     className={`bubble ${type}-message`}
@@ -20,5 +20,5 @@ export const Bubble = memo(
                 </div>
             </div>
         );
-    }
+    })
 );

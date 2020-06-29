@@ -1,5 +1,5 @@
 @mixin bubble-avatar($imgPath) {
-    @include flex-item('center');
+    @include flex-item(center);
     width: 35px;
     height: 35px;
     min-width: 35px;
@@ -12,8 +12,6 @@
     padding: 15px;
     max-width: 430px;
     border-radius: 20px;
-    //change animation
-    animation: 0.18s ease-in 0.28s 1 normal;
 }
 .chat {
     .chat-input {
@@ -50,19 +48,17 @@
     }
 
     .messages {
-        height: calc(100vh - 50px);
-        display: flex;
-        justify-content: flex-end;
+        min-height: calc(100vh - 50px);
         flex-direction: column;
-        // @include flex-container('flex-end');
+        @include flex-container(flex-end);
         .bubble {
             @include bubble-text();
-            //Change
+            animation: fadeIn ease 0.5s;
             margin: 5px;
         }
 
         .agent {
-            @include flex-container('flex-start');
+            @include flex-container(flex-start);
             div:only-child {
                 margin-left: 40px;
             }
@@ -75,7 +71,7 @@
         }
 
         .user {
-            @include flex-container('end');
+            @include flex-container(end);
             flex-direction: row-reverse;
             .user-message {
                 background-color: rgb(74, 74, 74);
@@ -97,5 +93,14 @@
         div:not(.user):not(.spinner) > div:nth-of-type(2n + 1) {
             border-bottom-left-radius: 3px;
         }
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }
