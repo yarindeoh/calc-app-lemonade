@@ -50,7 +50,7 @@ export let messageQueue = {
                 try {
                     return evaluate(exp);
                 } catch (err) {
-                    return err;
+                    console.log(err);
                 }
             },
             type: MESSAGE_TYPE.message,

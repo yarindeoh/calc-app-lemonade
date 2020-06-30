@@ -5,8 +5,9 @@
   "author": "yarindeoh",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --mode=development",
+    "start-dev": "webpack-dev-server --mode=development",
     "build": "webpack --mode production",
+    "start": "node server",
     "test": "jest",
     "test-watch": "jest --watch",
     "lint-fix": "eslint --fix  --ext .js src"
