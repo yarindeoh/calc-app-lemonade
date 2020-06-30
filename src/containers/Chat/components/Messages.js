@@ -1,4 +1,4 @@
-import React, { memo, useRef, useEffect } from 'react';
+import React, { memo } from 'react';
 
 import { Bubble } from 'components/Bubble';
 import { MESSAGE_TYPE, USER } from 'containers/Chat/chatConstants';

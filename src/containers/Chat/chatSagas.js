@@ -1,12 +1,12 @@
 import { put, takeLatest, delay, call, select } from 'redux-saga/effects';
 import {
     PROMOTE_CURR_STEP,
+    CHAT_INITIALIZATION,
+    USER_POST_MESSAGE,
     postAgentMessageAction,
     promoteStepAction,
     promoteToStepAction,
     typingAction,
-    CHAT_INITIALIZATION,
-    USER_POST_MESSAGE,
 } from 'containers/Chat/chatConstants';
 import { getCurrentStep } from 'containers/Chat/chatSelectors';
 import { messageQueue } from 'services/messageQueue';
@@ -24,7 +24,7 @@ export function* chatInitHandler() {
 }
 
 /**
- * 
+ * Promoting to next step only if messagesQueue is empty
  * @param {String} step
  */
 export function* handleEndOfQueue(step) {
@@ -33,9 +33,6 @@ export function* handleEndOfQueue(step) {
     }
 }
 
-/**
- * Send agent messages
- */
 export function* agentPostMessagesHandler() {
     let currentStep = yield select(getCurrentStep);
     yield call(messageHandler, { currentStep });
@@ -46,8 +43,13 @@ export function* userPostMessageHandler(action) {
     yield call(messageHandler, { currentStep, userInput });
 }
 
+/**
+ * Post agent messages from messageQueue according to currentStep
+ * and user input if exist.
+ * @param {String} currentStep
+ * @param {String} userInput
+ */
 export function* messageHandler({ currentStep, userInput }) {
-    console.log(messageQueue);
     yield call(postAgentMessages, {
         messages: messageQueue[currentStep],
         userInput,
@@ -55,6 +57,7 @@ export function* messageHandler({ currentStep, userInput }) {
     yield call(handleEndOfQueue, currentStep);
 }
 
+// Remove required messages from messageQueue
 export function popFromMessageQueue({ messages, indexsToBeRemoved }) {
     while (indexsToBeRemoved.length) {
         messages.splice(indexsToBeRemoved.pop(), 1);
@@ -62,7 +65,9 @@ export function popFromMessageQueue({ messages, indexsToBeRemoved }) {
 }
 
 /**
- *
+ * Post agent message after a delay, handle typing state and update messagesQueue.
+ * Handle message content type -> string/function.
+ * If it's a request break from look in order to wait for user response.
  * @param {*} queue Array of objects of messasges { text: String, type: MESSAGE/REQUEST }
  * @param {*} sender AGENT/USER
  */
