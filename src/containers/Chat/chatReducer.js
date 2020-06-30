@@ -1,5 +1,5 @@
 import {
-    steps,
+    // steps,
     PROMOTE_CURR_STEP,
     AGENT_MESSAGE,
     USER_MESSAGE,
@@ -11,7 +11,26 @@ const initialState = {
     currentStep: steps[0],
     messagesList: [],
     isTyping: false,
+    steps: steps,
 };
+import { steps } from 'services/messageQueue';
+
+/**
+ * Promoting steps array by one or by custom step
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ */
+function promoteStepState(state, action) {
+    // Creating a new instance of steps arr when reducing the first element
+    let newSteps = state.steps.filter((step, index) => index !== 0);
+    let customStep = action?.payload;
+    let newCurrentStep = action ? newSteps[0][customStep] : newSteps[0];
+    return {
+        ...state,
+        steps: newSteps,
+        currentStep: newCurrentStep,
+    };
+}
 
 export function chatReducer(state = initialState, action) {
     switch (action.type) {
@@ -21,18 +40,10 @@ export function chatReducer(state = initialState, action) {
                 ...state,
                 messagesList: [...state.messagesList, action.payload],
             };
-        //TODO:: refactor currentStep change from state
         case PROMOTE_CURR_STEP:
-            return {
-                ...state,
-                currentStep: [...steps.splice(0, 1)] && steps[0],
-            };
+            return promoteStepState(state);
         case PROMOTE_TO_STEP:
-            return {
-                ...state,
-                currentStep:
-                    [...steps.splice(0, 1)] && steps[0][action.payload],
-            };
+            return promoteStepState(state, action);
         case TYPING_STATE:
             return {
                 ...state,

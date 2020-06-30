@@ -3,7 +3,7 @@ import React from 'react';
 import {
     useAgentInit,
     useMessagesList,
-    useUserMessage,
+    useUserMessage
 } from 'containers/Chat/chatHooks';
 import { Messages } from './components/Messages';
 
@@ -18,13 +18,12 @@ const ChatView = () => {
                 <input
                     type="text"
                     value={userMessage}
-                    onChange={(event) => setUserMessage(event.target.value)}
+                    onChange={event => setUserMessage(event.target.value)}
                 />
                 <button
                     onClick={() => postUserMessage(userMessage)}
                     className="submit-icon"
-                >
-                </button>
+                ></button>
             </div>
         </div>
     );

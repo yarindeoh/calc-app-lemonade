@@ -1,22 +1,21 @@
-import { put, takeLatest, delay, call, select, take } from 'redux-saga/effects';
+import { put, takeLatest, call, select } from 'redux-saga/effects';
 import {
     watchChat,
     postAgentMessages,
-    popFromMessageQueue,
     userPostMessageHandler,
     agentPostMessagesHandler,
     handleEndOfQueue,
     chatInitHandler,
+    messageHandler,
 } from 'containers/Chat/chatSagas';
 import { getCurrentStep } from 'containers/Chat/chatSelectors';
+import { messageQueue, steps } from 'services/messageQueue';
 
 import {
-    MESSAGES_QUEUE,
     CHAT_INITIALIZATION,
     PROMOTE_CURR_STEP,
     USER_POST_MESSAGE,
     promoteToStepAction,
-    steps,
 } from 'containers/Chat/chatConstants';
 
 describe('Chat sagas test', function() {
@@ -45,13 +44,11 @@ describe('Chat sagas test', function() {
     it('Agent post message', () => {
         const gen = agentPostMessagesHandler();
         let currentStep = steps[2];
-        let messages = MESSAGES_QUEUE[currentStep];
         expect(gen.next(currentStep).value).toEqual(select(getCurrentStep));
-        expect(gen.next(MESSAGES_QUEUE[2]).value).toEqual(
-            call(postAgentMessages, { messages: MESSAGES_QUEUE[2] })
-        );
-        expect(gen.next(MESSAGES_QUEUE[2]).value).toEqual(
-            call(handleEndOfQueue, MESSAGES_QUEUE[2])
+        expect(gen.next(currentStep).value).toEqual(
+            call(messageHandler, {
+                currentStep: currentStep,
+            })
         );
         expect(gen.next().done).toEqual(true);
     });
@@ -65,13 +62,27 @@ describe('Chat sagas test', function() {
         };
         const gen = userPostMessageHandler(action);
         expect(gen.next().value).toEqual(
-            call(postAgentMessages, {
-                messages: MESSAGES_QUEUE[action.payload.currentStep],
+            call(messageHandler, {
                 userInput: action.payload.userInput,
+                currentStep: action.payload.currentStep,
+            })
+        );
+        expect(gen.next().done).toEqual(true);
+    });
+    it('Message handler', () => {
+        const payload = {
+            currentStep: steps[2],
+            userInput: '2+2',
+        };
+        const gen = messageHandler(payload);
+        expect(gen.next().value).toEqual(
+            call(postAgentMessages, {
+                messages: messageQueue[payload.currentStep],
+                userInput: payload.userInput,
             })
         );
         expect(gen.next().value).toEqual(
-            call(handleEndOfQueue, action.payload.currentStep)
+            call(handleEndOfQueue, payload.currentStep)
         );
         expect(gen.next().done).toEqual(true);
     });

@@ -6,12 +6,12 @@ import {
     postUserMessageFromStepAction,
     chatInitializationAction,
     MESSAGE_TYPE,
-    USER,
+    USER
 } from 'containers/Chat/chatConstants';
 import {
     getMessagesList,
     getCurrentStep,
-    getTypingState,
+    getTypingState
 } from 'containers/Chat/chatSelectors';
 
 export const useAgentInit = () => {
@@ -31,21 +31,21 @@ export const useUserMessage = () => {
     let currentStep = useSelector(getCurrentStep, shallowEqual);
     return {
         postUserMessage: useCallback(
-            (userMessage) => {
+            userMessage => {
                 // Add message to message list in the store
                 // for presenting messages in UI and for future transcript
                 dispatch(
                     postUserMessageAction({
                         sender: USER,
                         content: userMessage,
-                        type: MESSAGE_TYPE.message,
+                        type: MESSAGE_TYPE.message
                     })
                 );
                 // Post user message to handle by middleware
                 dispatch(
                     postUserMessageFromStepAction({
                         userInput: userMessage,
-                        currentStep,
+                        currentStep
                     })
                 );
                 // Reset user input
@@ -54,7 +54,7 @@ export const useUserMessage = () => {
             [currentStep]
         ),
         userMessage,
-        setUserMessage,
+        setUserMessage
     };
 };
 

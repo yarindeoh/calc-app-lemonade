@@ -5,14 +5,14 @@ import {
     promoteStepAction,
     promoteToStepAction,
     typingAction,
-    MESSAGES_QUEUE,
     CHAT_INITIALIZATION,
     USER_POST_MESSAGE,
 } from 'containers/Chat/chatConstants';
 import { getCurrentStep } from 'containers/Chat/chatSelectors';
+import { messageQueue } from 'services/messageQueue';
 
 /**
- * A naive and linear decision of next step base on storage prop
+ * A naive and linear decision of next step base on sessionStorage prop
  * decistion tree is arr of arr/text
  * if not -> promote to welcome step
  * if yes -> promote to welcome back step
@@ -23,8 +23,12 @@ export function* chatInitHandler() {
     yield call(agentPostMessagesHandler);
 }
 
+/**
+ * 
+ * @param {String} step
+ */
 export function* handleEndOfQueue(step) {
-    if (MESSAGES_QUEUE[step].length === 0) {
+    if (messageQueue[step].length === 0) {
         yield put(promoteStepAction());
     }
 }
@@ -34,15 +38,18 @@ export function* handleEndOfQueue(step) {
  */
 export function* agentPostMessagesHandler() {
     let currentStep = yield select(getCurrentStep);
-    yield call(postAgentMessages, { messages: MESSAGES_QUEUE[currentStep] });
-    yield call(handleEndOfQueue, currentStep);
+    yield call(messageHandler, { currentStep });
 }
-
 
 export function* userPostMessageHandler(action) {
     let { currentStep, userInput } = action.payload;
+    yield call(messageHandler, { currentStep, userInput });
+}
+
+export function* messageHandler({ currentStep, userInput }) {
+    console.log(messageQueue);
     yield call(postAgentMessages, {
-        messages: MESSAGES_QUEUE[currentStep],
+        messages: messageQueue[currentStep],
         userInput,
     });
     yield call(handleEndOfQueue, currentStep);
